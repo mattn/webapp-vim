@@ -116,6 +116,11 @@ func main() {
 		}
 	})
 
+	serverAddr := *addr
+	if len(serverAddr) > 0 && serverAddr[0] == ':' {
+		serverAddr = "127.0.0.1" + serverAddr
+	}
+	log.Println("Starting server:", "http://" + serverAddr)
 	err = http.ListenAndServe(*addr, weblogs.Handler(http.DefaultServeMux))
 	if err != nil {
 		log.Fatal(err)
