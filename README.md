@@ -4,6 +4,10 @@
 
 Web server that can write web application in Vim script.
 
+![](http://go-gyazo.appspot.com/9f3e1755f0ee695b.png)
+
+
+
 # Requirements
 
 [webapi-vim](https://github.com/mattn/webapi-vim)
@@ -22,7 +26,7 @@ After installing golang, type following.
 # Example application
 
 This is application server. So this don't contains example to run webapp.
-Check [webapp-vim-vim](https://github.com/mattn/webapp-foo-vim)
+Check [webapp-foo-vim](https://github.com/mattn/webapp-foo-vim)
 
 # How to register your webapp
 
