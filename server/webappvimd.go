@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"github.com/keep94/weblogs"
 	"io/ioutil"
@@ -14,9 +15,9 @@ import (
 )
 
 type response struct {
-	Header []string `json:"header"`
-	Body   string   `json:"body"`
-	Status int      `json:"status"`
+	Header []string    `json:"header"`
+	Body   interface{} `json:"body"`
+	Status int         `json:"status"`
 }
 
 type request struct {
@@ -29,7 +30,11 @@ type request struct {
 
 var re_header = regexp.MustCompile(`^([a-zA-Z][-_a-zA-Z0-9]*):\s*(.*)`)
 
+var addr = flag.String("addr", ":9001", "server address")
+
 func main() {
+	flag.Parse()
+
 	b, err := exec.Command("vim", "--serverlist").Output()
 	if err != nil {
 		log.Fatal(err)
@@ -45,7 +50,7 @@ func main() {
 
 	}
 	if vim == "" {
-		log.Fatal("vim doesn't support remote protocol")
+		log.Fatal("vim doesn't support remote protocol, if you don't start vim yet, start now")
 	}
 	log.Print("Registered vim server: ", vim)
 
@@ -100,10 +105,18 @@ func main() {
 		if res.Status != 0 {
 			w.WriteHeader(res.Status)
 		}
-		w.Write([]byte(res.Body))
+		if body, ok := res.Body.(string); ok {
+			w.Write([]byte(body))
+		} else if bf, ok := res.Body.([]interface{}); ok {
+			b := make([]byte, len(bf))
+			for i := range bf {
+				b[i] = byte(bf[i].(float64))
+			}
+			w.Write(b)
+		}
 	})
 
-	err = http.ListenAndServe("127.0.0.1:9001", weblogs.Handler(http.DefaultServeMux))
+	err = http.ListenAndServe(*addr, weblogs.Handler(http.DefaultServeMux))
 	if err != nil {
 		log.Fatal(err)
 	}

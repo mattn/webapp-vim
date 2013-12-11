@@ -34,7 +34,7 @@ function! webapp#params(req)
     let pos = stridx(q, '=')
     if pos > 0
       let params[q[:pos-1]] = q[pos+1:]
-	endif
+    endif
   endfor
   return params
 endfunction
@@ -62,15 +62,26 @@ function! webapp#servefile(req, basedir)
   if isdirectory(fname)
     if filereadable(fname . '/index.html')
       let fname .= '/index.html'
-      call add(res.header, "Content-Type: " . webapp#fname2mimetype(fname))
-      let res.body = iconv(join(readfile(fname, 'b'), "\n"), "UTF-8", &encoding)
+      let mimetype = webapp#fname2mimetype(fname)
+      call add(res.header, "Content-Type: " . mimetype)
+      if mimetype =~ '^text/'
+        let res.body = iconv(join(readfile(fname, 'b'), "\n"), "UTF-8", &encoding)
+      else
+        let res.body = map(split(substitute(system("xxd -ps " . fname), "[\r\n]", "", "g"), '..\zs'), '"0x".v:val+0')
+      endif
     else
       call add(res.header, "Content-Type: text/plain; charset=UTF-8")
       let res.body = join(map(map(split(glob(fname . '/*'), "\n"), 'a:req.path . webapp#path2slash(v:val[len(fname):])'), '"<a href=\"".webapi#http#encodeURIComponent(v:val)."\">".webapi#html#encodeEntityReference(v:val)."</a><br>"'), "\n")
     endif
   elseif filereadable(fname)
-    call add(res.header, "Content-Type: " . webapp#fname2mimetype(fname))
-    let res.body = iconv(join(readfile(fname, 'b'), "\n"), "UTF-8", &encoding)
+    let mimetype = webapp#fname2mimetype(fname)
+    call add(res.header, "Content-Type: " . mimetype)
+    if mimetype =~ '^text/'
+      let res.body = iconv(join(readfile(fname, 'b'), "\n"), "UTF-8", &encoding)
+    else
+      let res.body = map(split(substitute(system("xxd -ps " . fname), "[\r\n]", "", "g"), '..\zs'), '"0x".v:val+0')
+	  let g:hoge = res.body
+    endif
   else
     let res.status = 404
     let res.body = "Not Found"
