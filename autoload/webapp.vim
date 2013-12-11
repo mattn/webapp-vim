@@ -80,7 +80,6 @@ function! webapp#servefile(req, basedir)
       let res.body = iconv(join(readfile(fname, 'b'), "\n"), "UTF-8", &encoding)
     else
       let res.body = map(split(substitute(system("xxd -ps " . fname), "[\r\n]", "", "g"), '..\zs'), '"0x".v:val+0')
-	  let g:hoge = res.body
     endif
   else
     let res.status = 404
