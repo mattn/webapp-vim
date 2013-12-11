@@ -19,10 +19,39 @@ After installing golang, type following.
     $ go build webappvimd.go
     $ ./webappvimd
 
-# Note
+# Example application
 
 This is application server. So this don't contains example to run webapp.
 Check [webapp-vim-vim](https://github.com/mattn/webapp-foo-vim)
+
+# How to register your webapp
+
+You need to make following directory structure.
+
+    +---autoload
+    |   |
+    |   +--- myapp.vim ... add code for your application
+    |
+    +--- plugin ... script to register your application
+    |
+    +--- static ... static files
+    
+1. Add script to register your application in `plugin/myapp.vim`.
+
+        call webapp#handle("/myapp", function('myapp#handle'))
+
+2. Put html/js/css into `static` directory.
+
+3. Write application
+
+        function! myapp#handle(req)
+          if a:req.path == '/foo'
+            return {"body", "hello world"}
+          else
+            let a:req.path = a:req.path[4:]
+            return webapp#servefile(a:req, s:basedir)
+          endif
+        endfunction
 
 # License
 
