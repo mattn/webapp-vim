@@ -20,8 +20,8 @@ After installing golang, type following.
     $ cd ~/.vim/bundle
     $ git clone https://github.com/mattn/webapp-vim
     $ cd webapp-vim/server
-    $ go build webappvimd.go
-    $ ./webappvimd
+    $ go build
+    $ ./server
 
 # Example application
 

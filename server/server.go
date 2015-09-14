@@ -90,6 +90,7 @@ func main() {
 			http.Error(w, string(b), http.StatusInternalServerError)
 			return
 		}
+		b = convert_input(b)
 		var res response
 		err = json.Unmarshal(b, &res)
 		if err != nil {
@@ -120,7 +121,7 @@ func main() {
 	if len(serverAddr) > 0 && serverAddr[0] == ':' {
 		serverAddr = "127.0.0.1" + serverAddr
 	}
-	log.Println("Starting server:", "http://" + serverAddr)
+	log.Println("Starting server:", "http://"+serverAddr)
 	err = http.ListenAndServe(*addr, weblogs.Handler(http.DefaultServeMux))
 	if err != nil {
 		log.Fatal(err)
