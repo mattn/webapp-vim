@@ -1,5 +1,4 @@
-let s:basedir = expand('<sfile>:h:h') . '/static'
-let s:count = 1
+let s:basedir = get(g:, 'webapp_static_dir', expand('<sfile>:h:h') . '/static')
 
 let s:mimetypes = {
 \ 'ico':  'image/x-icon',
